@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">FinanceManager</string>
+    <string name="app_name">Finance manager</string>
+
+    <!--Main Activity-->
+    <string name="sing_in">Sign In</string>
+    <string name="login_text">Login:</string>
+    <string name="password_text">Password:</string>
+    <string name="empty_fields">you must complete the fields</string>
+
+
+    <string name="token_value"></string>
 </resources>
