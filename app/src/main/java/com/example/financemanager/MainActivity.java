@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 JSONObject json = prepareJson(createLoginModel(login, password));
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.LOGIN_URL, json,
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.LOGIN, json,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void storeJwtToken(JSONObject json) throws JSONException {
         String token = json.getString("token");
-        Log.e("JWT TOKEN", token);
+        Log.d("JWT TOKEN", token);
 
         preferences.edit()
                 .putString(Constants.JWT_NAME, token)
