@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">Finance manager</string>
 
+    <string name="api_response_error">Api error.</string>
+
     <!--Main Activity-->
     <string name="sing_in">Sign In</string>
     <string name="login_text">Login:</string>
     <string name="password_text">Password:</string>
-    <string name="empty_fields">you must complete the fields</string>
+    <string name="empty_fields">This fields are required.</string>
+    <string name="json_object_exception_on_create">Internal system error.</string>
+    <string name="invalid_credentials">Invalid credentials.</string>
 
-
-    <string name="token_value"></string>
+    <string name="jwt_value"></string>
 </resources>
