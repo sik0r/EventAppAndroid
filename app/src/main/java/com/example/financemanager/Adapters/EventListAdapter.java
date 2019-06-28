@@ -47,12 +47,14 @@ public class EventListAdapter extends BaseAdapter {
         view = inflater.inflate(R.layout.event_list_item, null);
 
         TextView name = view.findViewById(R.id.eventTitile);
-        TextView priority = view.findViewById(R.id.eventStartDate);
-        TextView status = view.findViewById(R.id.eventEndDate);
+        TextView availableTickets = view.findViewById(R.id.availableTickets);
+        TextView eventStartDate = view.findViewById(R.id.eventStartDate);
+        TextView eventEndDate = view.findViewById(R.id.eventEndDate);
 
         name.setText(events.get(position).getName());
-        priority.setText(events.get(position).getStartDate());
-        status.setText(events.get(position).getEndDate());
+        availableTickets.setText(String.valueOf(events.get(position).getAvailableTicketsCount()));
+        eventStartDate.setText(events.get(position).getStartDate());
+        eventEndDate.setText(events.get(position).getEndDate());
 
         return view;
     }

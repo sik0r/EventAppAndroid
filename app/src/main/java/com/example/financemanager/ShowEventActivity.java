@@ -2,34 +2,20 @@ package com.example.financemanager;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.financemanager.Models.EventModel;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.financemanager.Services.ShowEventService;
 
 public class ShowEventActivity extends AppCompatActivity {
 
@@ -40,20 +26,49 @@ public class ShowEventActivity extends AppCompatActivity {
     TextView availableTicket;
     TextView ticketPrice;
     Button purchase;
+    Button delete;
     RequestQueue queue;
     SharedPreferences preferences;
     EventModel eventModel;
+    ShowEventService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_task);
 
+        service = new ShowEventService(getBaseContext(), this.getSharedPreferences("string", Context.MODE_PRIVATE));
         eventModel = (EventModel) getIntent().getSerializableExtra("event");
-
         queue = Volley.newRequestQueue(this);
         preferences = this.getSharedPreferences("string", Context.MODE_PRIVATE);
+        initViewItems();
 
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                queue.add(service.delete(eventModel.getId()));
+            }
+        });
+
+        if (eventModel.hasTickets()) {
+            purchase.setVisibility(View.VISIBLE);
+
+            purchase.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    prepareDialog();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getBaseContext(), EventListActivity.class);
+        startActivity(intent);
+    }
+
+    private void initViewItems() {
         name = (TextView) findViewById(R.id.name);
         description = (TextView) findViewById(R.id.description);
         startDate = (TextView) findViewById(R.id.startDate);
@@ -61,6 +76,7 @@ public class ShowEventActivity extends AppCompatActivity {
         availableTicket = (TextView) findViewById(R.id.tickets);
         ticketPrice = (TextView) findViewById(R.id.price);
         purchase = (Button) findViewById(R.id.purchase);
+        delete = (Button) findViewById(R.id.delete);
         purchase.setVisibility(View.INVISIBLE);
 
         name.setText(eventModel.getName());
@@ -69,91 +85,37 @@ public class ShowEventActivity extends AppCompatActivity {
         endDate.setText(eventModel.getEndDate());
         availableTicket.setText(String.valueOf(eventModel.getAvailableTicketsCount()));
         ticketPrice.setText(String.valueOf(eventModel.getTickerPrice()));
-
-        if (eventModel.hasTickets()) {
-            purchase.setVisibility(View.VISIBLE);
-
-            purchase.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Dialog dialog = new Dialog(ShowEventActivity.this);
-                    dialog.setTitle("Purchase tickets.");
-                    dialog.setContentView(R.layout.purchase_ticket_dialog);
-
-                    Button ok = (Button) dialog.findViewById(R.id.ok);
-                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
-
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    ok.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            EditText etCount = (EditText) dialog.findViewById(R.id.count);
-                            final int count = Integer.parseInt(etCount.getText().toString());
-
-                            JSONObject json = prepareJson(count);
-                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.PURCHASE_TICKETS, json,
-                                    new Response.Listener<JSONObject>() {
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            int available = eventModel.getAvailableTicketsCount() - count;
-                                            eventModel.setAvailableTicketsCount(available);
-                                            availableTicket.setText(String.valueOf(available));
-                                            dialog.dismiss();
-
-                                            Toast.makeText(ShowEventActivity.this, "Ticket purchased", Toast.LENGTH_LONG).show();
-                                        }
-                                    },
-                                    new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-
-                                            JSONObject response = null;
-                                            try {
-                                                response = new JSONObject(new String(error.networkResponse.data));
-                                                Toast.makeText(ShowEventActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-                            ) {
-                                @Override
-                                public Map<String, String> getHeaders() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("Content-Type", "application/json; charset=UTF-8");
-                                    params.put("Authorization", "Bearer " + preferences.getString(Constants.JWT_NAME, "xx"));
-
-                                    return params;
-                                }
-                            };
-
-                            queue.add(request);
-                        }
-                    });
-
-                    dialog.show();
-                }
-            });
-        }
     }
 
-    private JSONObject prepareJson(int amount) {
-        JSONObject json = new JSONObject();
+    private void prepareDialog() {
+        final Dialog dialog = new Dialog(ShowEventActivity.this);
+        dialog.setTitle("Purchase tickets.");
+        dialog.setContentView(R.layout.purchase_ticket_dialog);
 
-        try {
-            json.put("EventId", eventModel.getId());
-            json.put("amount", amount);
-        } catch (JSONException ex) {
-            Log.e("ERROR JSONException", ex.getMessage(), ex);
-            Toast.makeText(ShowEventActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        Button ok = (Button) dialog.findViewById(R.id.ok);
+        Button cancel = (Button) dialog.findViewById(R.id.cancel);
 
-        return json;
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText etCount = (EditText) dialog.findViewById(R.id.count);
+                final int count = Integer.parseInt(etCount.getText().toString());
+
+                if (count > eventModel.getAvailableTicketsCount()) {
+                    Toast.makeText(getBaseContext(), "Not enought available tickets to purchase.", Toast.LENGTH_LONG).show();
+                } else {
+                    queue.add(service.purchase(eventModel, count, availableTicket));
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog.show();
     }
 }
