@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class EventListActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("===================", "DDDDDDDDDDDDDDDDDDddaw");
+                        Log.d("VolleyError", error.toString());
                     }
                 }
         ) {
@@ -79,7 +80,6 @@ public class EventListActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("Content-Type", "application/json; charset=UTF-8");
-                Log.d("TOKEN===", preferences.getString(Constants.JWT_NAME, "xx"));
                 params.put("Authorization", "Bearer " + preferences.getString(Constants.JWT_NAME, "xx"));
 
                 return params;
@@ -89,19 +89,20 @@ public class EventListActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         queue.add(request);
 
-
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EventModel eventModel = events.get(position);
+                Intent intent = new Intent(getBaseContext(), ShowEventActivity.class);
+                intent.putExtra("event", (Serializable) eventModel);
+                startActivity(intent);
 
                 final StringRequest getEventRequest = new StringRequest(Request.Method.GET, EVENTS_LIST + "/" + eventModel.getId(), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            Log.d("====", jsonObject.getString("id"));
                         } catch (Throwable ex) {
                             Log.d("JSONException", ex.getMessage());
                         }
@@ -146,11 +147,12 @@ public class EventListActivity extends AppCompatActivity {
         switch (menuItem.getItemId()){
 
             case R.id.createEventBtn:
+                Intent intent = new Intent(getBaseContext(), CreateEventActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
         }
-
     }
 
     private void parseJson(JSONObject json, int i) throws JSONException {
@@ -158,12 +160,12 @@ public class EventListActivity extends AppCompatActivity {
         EventModel event = new EventModel();
         event.setId(json.getString("id"));
         event.setName(json.getString("name"));
+        event.setDescription(json.getString("description"));
         event.setStartDate(json.getString("startDate"));
         event.setEndDate(json.getString("endDate"));
         event.setAvailableTicketsCount(json.getInt("availableTicketsCount"));
         event.setPurchasedTicketsCount(json.getInt("purchasedTicketsCount"));
-
-        Log.d("EVENT NAME", event.getName());
+        event.setTickerPrice(json.getInt("ticketPrice"));
 
         this.events.add(i, event);
     }

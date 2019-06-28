@@ -1,6 +1,8 @@
 package com.example.financemanager.Models;
 
-public class EventModel {
+import java.io.Serializable;
+
+public class EventModel implements Serializable {
 
     private String id;
     private String name;
@@ -10,6 +12,7 @@ public class EventModel {
     private int ticketsCount;
     private int purchasedTicketsCount;
     private int availableTicketsCount;
+    private double tickerPrice;
 
     public String getId() {
         return id;
@@ -55,6 +58,10 @@ public class EventModel {
         return availableTicketsCount;
     }
 
+    public boolean hasTickets() {
+        return availableTicketsCount > 0;
+    }
+
     public void setAvailableTicketsCount(int availableTicketsCount) {
         this.availableTicketsCount = availableTicketsCount;
     }
@@ -73,5 +80,13 @@ public class EventModel {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public double getTickerPrice() {
+        return tickerPrice;
+    }
+
+    public void setTickerPrice(double tickerPrice) {
+        this.tickerPrice = tickerPrice;
     }
 }
