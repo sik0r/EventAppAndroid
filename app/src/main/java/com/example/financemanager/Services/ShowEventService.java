@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.financemanager.Constants.Url.EVENTS_LIST;
+import static com.example.financemanager.Constants.Url.EVENTS;
 
 public class ShowEventService {
 
@@ -37,7 +37,7 @@ public class ShowEventService {
 
     public StringRequest delete(String eventId) {
 
-        final StringRequest request = new StringRequest(Request.Method.DELETE, EVENTS_LIST + "/" + eventId, new Response.Listener<String>() {
+        final StringRequest request = new StringRequest(Request.Method.DELETE, EVENTS + "/" + eventId, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Intent intent = new Intent(context, EventListActivity.class);
@@ -73,7 +73,7 @@ public class ShowEventService {
 
     public JsonObjectRequest purchase(final EventModel eventModel, final int count, final TextView availableTicket) {
         JSONObject json = prepareJson(eventModel.getId(), count);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.PURCHASE_TICKETS, json,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.TICKETS, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

@@ -13,7 +13,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.financemanager.Adapters.EventListAdapter;
 import com.example.financemanager.Constants;
 import com.example.financemanager.Models.EventModel;
-import com.example.financemanager.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.financemanager.Constants.Url.EVENTS_LIST;
+import static com.example.financemanager.Constants.Url.EVENTS;
 
 public class EventListService {
 
@@ -38,7 +37,7 @@ public class EventListService {
     }
 
     public StringRequest list(final ListView eventListView) {
-        final StringRequest request = new StringRequest(Request.Method.GET, EVENTS_LIST, new Response.Listener<String>() {
+        final StringRequest request = new StringRequest(Request.Method.GET, EVENTS, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

@@ -58,7 +58,7 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JSONObject json = prepareJson(createModel());
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.CREATE_EVENT, json,
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.Url.EVENTS, json,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
