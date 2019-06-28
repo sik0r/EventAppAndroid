@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isValid(login, password)) {
-                    errors.setText(getString(R.string.empty_fields));
+                    Toast.makeText(MainActivity.this, getString(R.string.empty_fields), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -59,14 +60,22 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 } catch (JSONException ex) {
                                     Log.d("JSONException", ex.getMessage());
-                                    errors.setText(R.string.invalid_credentials);
+                                    Toast.makeText(MainActivity.this, R.string.invalid_credentials, Toast.LENGTH_LONG).show();
                                 }
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
-                            public void onErrorResponse(VolleyError error) {
-                                errors.setText(R.string.api_response_error);
+                            public void onErrorResponse(VolleyError error)  {
+
+                                JSONObject response = null;
+                                try {
+                                    response = new JSONObject(new String(error.networkResponse.data));
+                                    Log.d("API ERROR", response.get("message").toString());
+                                    Toast.makeText(MainActivity.this, response.get("message").toString(), Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                 );

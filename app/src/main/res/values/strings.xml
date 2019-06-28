@@ -12,4 +12,7 @@
     <string name="invalid_credentials">Invalid credentials.</string>
 
     <string name="jwt_value"></string>
+    <string name="title">Title: </string>
+    <string name="eventDates">Date: </string>
+    <string name="available_tickets_count">Available tickets: </string>
 </resources>

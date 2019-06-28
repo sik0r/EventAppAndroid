@@ -5,6 +5,8 @@ public class EventModel {
     private String id;
     private String name;
     private String description;
+    private String startDate;
+    private String endDate;
     private int ticketsCount;
     private int purchasedTicketsCount;
     private int availableTicketsCount;
@@ -55,5 +57,21 @@ public class EventModel {
 
     public void setAvailableTicketsCount(int availableTicketsCount) {
         this.availableTicketsCount = availableTicketsCount;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }
