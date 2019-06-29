@@ -13,7 +13,6 @@ import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.example.financemanager.Adapters.EventListAdapter;
 import com.example.financemanager.Models.EventModel;
 import com.example.financemanager.Services.EventListService;
 
@@ -24,7 +23,6 @@ public class EventListActivity extends AppCompatActivity {
     RequestQueue queue;
     SharedPreferences preferences;
     ListView eventListView;
-    EventListAdapter adapter;
     EventListService service;
 
     @Override
@@ -60,13 +58,16 @@ public class EventListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
 
-        switch (menuItem.getItemId()) {
+        Intent intent;
 
+        switch (menuItem.getItemId()) {
             case R.id.createEventBtn:
-                Intent intent = new Intent(getBaseContext(), CreateEventActivity.class);
+                intent = new Intent(getBaseContext(), CreateEventActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.my_tickets:
+                intent = new Intent(getBaseContext(), TicketListActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
