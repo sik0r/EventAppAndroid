@@ -1,1 +1,1 @@
-# FinanceManagerAndroid
+# EventAppAndroid
